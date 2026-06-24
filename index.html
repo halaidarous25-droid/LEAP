@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LEAP — نظام إدارة الموارد البشرية</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+:root{
+  --p:#4f46e5;--p2:#7c3aed;--acc:#06b6d4;
+  --g:#10b981;--w:#f59e0b;--r:#ef4444;
+  --bg:#070b14;
+  --c1:rgba(255,255,255,0.05);--c2:rgba(255,255,255,0.08);
+  --bd:rgba(255,255,255,0.08);
+  --t1:#f1f5f9;--t2:#64748b;--t3:#94a3b8;
+  --sw:270px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Tajawal','Inter',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 10% 10%,rgba(79,70,229,.12) 0%,transparent 70%),radial-gradient(ellipse 50% 60% at 90% 85%,rgba(124,58,237,.09) 0%,transparent 70%);pointer-events:none;z-index:0;}
+.wrap{display:flex;min-height:100vh;position:relative;z-index:1;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sw);height:100vh;position:fixed;right:0;top:0;background:rgba(7,11,20,.96);backdrop-filter:blur(24px);border-left:1px solid var(--bd);display:flex;flex-direction:column;z-index:100;}
+.sb-logo{padding:22px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--bd);}
+.logo-box{width:42px;height:42px;border-radius:12px;flex-shrink:0;background:linear-gradient(135deg,var(--p),var(--p2));display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:900;color:#fff;box-shadow:0 4px 20px rgba(79,70,229,.45);}
+.logo-name{font-size:21px;font-weight:800;background:linear-gradient(135deg,#fff 30%,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.logo-sub{font-size:10px;color:var(--t2);margin-top:1px;}
+.sb-nav{flex:1;padding:12px 10px;overflow-y:auto;}
+.nav-sec{font-size:9.5px;text-transform:uppercase;letter-spacing:1.5px;color:var(--t2);padding:16px 10px 6px;font-weight:700;}
+.ni{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:all .2s;margin-bottom:2px;color:var(--t3);font-size:13.5px;font-weight:500;position:relative;border:1px solid transparent;}
+.ni:hover{background:var(--c2);color:var(--t1);}
+.ni.on{background:linear-gradient(135deg,rgba(79,70,229,.22),rgba(124,58,237,.14));color:#fff;border-color:rgba(79,70,229,.28);}
+.ni.on::after{content:'';position:absolute;right:0;top:20%;height:60%;width:3px;background:linear-gradient(180deg,var(--p),var(--p2));border-radius:3px 0 0 3px;}
+.ni-ic{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;background:rgba(255,255,255,.05);transition:all .2s;}
+.ni.on .ni-ic{background:linear-gradient(135deg,var(--p),var(--p2));box-shadow:0 3px 10px rgba(79,70,229,.35);}
+.nbadge{margin-right:auto;background:var(--r);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;}
+.sb-foot{padding:14px;border-top:1px solid var(--bd);}
+.urow{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:11px;background:var(--c1);cursor:pointer;transition:background .2s;}
+.urow:hover{background:var(--c2);}
+.uav{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--p2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;}
+.u-name{font-size:13px;font-weight:600;}
+.u-role{font-size:11px;color:var(--t2);}
+
+/* MAIN */
+.main{margin-right:var(--sw);flex:1;min-height:100vh;}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(7,11,20,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.tb-l h1{font-size:18px;font-weight:700;line-height:1.2;}
+.tb-l span{font-size:12px;color:var(--t2);}
+.tb-r{display:flex;align-items:center;gap:10px;}
+.sbar{display:flex;align-items:center;gap:8px;background:var(--c1);border:1px solid var(--bd);border-radius:10px;padding:7px 13px;width:220px;transition:border-color .2s,background .2s;}
+.sbar:focus-within{border-color:rgba(79,70,229,.5);background:rgba(79,70,229,.08);}
+.sbar input{background:none;border:none;outline:none;color:var(--t1);font-size:13px;font-family:inherit;width:100%;}
+.sbar input::placeholder{color:var(--t2);}
+.ibtn{width:36px;height:36px;border-radius:9px;background:var(--c1);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--t3);position:relative;}
+.ibtn:hover{background:var(--c2);color:var(--t1);}
+.ndot{position:absolute;top:6px;left:6px;width:8px;height:8px;background:var(--r);border-radius:50%;border:2px solid var(--bg);}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.bp{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;box-shadow:0 4px 14px rgba(79,70,229,.3);}
+.bp:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(79,70,229,.4);}
+.bg{background:var(--c1);color:var(--t3);border:1px solid var(--bd);}
+.bg:hover{background:var(--c2);color:var(--t1);}
+.bsm{padding:6px 12px;font-size:12px;}
+.bdn{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.bsc{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.2);}
+
+/* PAGES */
+.page{padding:28px;display:none;animation:fadeUp .35s ease;}
+.page.on{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* STAT CARDS */
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:24px;}
+.sc{background:var(--c1);border:1px solid var(--bd);border-radius:16px;padding:20px;position:relative;overflow:hidden;cursor:default;transition:transform .2s,border-color .2s;}
+.sc:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.16);}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.sb::before{background:linear-gradient(90deg,var(--p),var(--acc));}
+.sv::before{background:linear-gradient(90deg,var(--p2),#ec4899);}
+.sg2::before{background:linear-gradient(90deg,var(--g),#84cc16);}
+.sw::before{background:linear-gradient(90deg,var(--w),#f97316);}
+.sico{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:14px;}
+.sb .sico{background:rgba(79,70,229,.15);color:#818cf8;}
+.sg2 .sico{background:rgba(16,185,129,.15);color:#34d399;}
+.sw .sico{background:rgba(245,158,11,.15);color:#fbbf24;}
+.sv .sico{background:rgba(124,58,237,.15);color:#a78bfa;}
+.sval{font-size:28px;font-weight:800;line-height:1;margin-bottom:5px;}
+.slbl{font-size:12px;color:var(--t3);font-weight:500;}
+.schg{position:absolute;top:18px;left:18px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;}
+.cu{background:rgba(16,185,129,.15);color:#34d399;}
+.cd{background:rgba(239,68,68,.15);color:#f87171;}
+
+/* CARDS */
+.card{background:var(--c1);border:1px solid var(--bd);border-radius:16px;overflow:hidden;}
+.ch{padding:18px 22px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);}
+.ch-l .ct{font-size:15px;font-weight:700;}
+.ch-l .cs{font-size:11.5px;color:var(--t2);margin-top:2px;}
+.cb{padding:18px 22px;}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:20px;}
+.g73{display:grid;grid-template-columns:7fr 3fr;gap:18px;margin-bottom:20px;}
+.mb20{margin-bottom:20px;}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{text-align:right;padding:11px 16px;font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--t2);font-weight:700;background:rgba(255,255,255,.025);border-bottom:1px solid var(--bd);}
+.tbl td{padding:13px 16px;font-size:13.5px;border-bottom:1px solid rgba(255,255,255,.035);vertical-align:middle;}
+.tbl tr:hover td{background:rgba(255,255,255,.02);}
+.tbl tr:last-child td{border-bottom:none;}
+
+/* AVATAR */
+.av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.erow{display:flex;align-items:center;gap:9px;}
+.en{font-size:13.5px;font-weight:600;}
+.eid{font-size:11px;color:var(--t2);}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:6px;font-size:11.5px;font-weight:600;}
+.bgg{background:rgba(16,185,129,.13);color:#34d399;}
+.bgw{background:rgba(245,158,11,.13);color:#fbbf24;}
+.bgr{background:rgba(239,68,68,.13);color:#f87171;}
+.bgb{background:rgba(6,182,212,.13);color:#22d3ee;}
+.bgp{background:rgba(79,70,229,.13);color:#818cf8;}
+.bgv{background:rgba(124,58,237,.13);color:#a78bfa;}
+
+/* PROGRESS */
+.prog{height:6px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden;}
+.pf{height:100%;border-radius:999px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+
+/* BARS CHART */
+.bars{display:flex;align-items:flex-end;gap:10px;height:150px;padding:0 4px;}
+.bgrp{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;}
+.barv{width:100%;border-radius:5px 5px 0 0;transition:height .9s cubic-bezier(.4,0,.2,1);cursor:pointer;min-height:4px;}
+.barv:hover{filter:brightness(1.25);}
+.blbl{font-size:10.5px;color:var(--t2);}
+
+/* DONUT */
+.dw{display:flex;align-items:center;gap:20px;}
+.dw svg{flex-shrink:0;}
+.leg{flex:1;}
+.lr{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.lr:last-child{border-bottom:none;}
+.ld{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.ll{font-size:12.5px;color:var(--t3);flex:1;}
+.lv{font-size:12.5px;font-weight:600;}
+
+/* TIMELINE */
+.tli{display:flex;gap:14px;padding-bottom:18px;position:relative;}
+.tli::before{content:'';position:absolute;right:18px;top:30px;bottom:0;width:1px;background:var(--bd);}
+.tli:last-child::before{display:none;}
+.tlic{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;position:relative;z-index:1;}
+.tlct h4{font-size:13.5px;font-weight:600;margin-bottom:3px;}
+.tlct p{font-size:11.5px;color:var(--t2);}
+
+/* CALENDAR */
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center;}
+.cdn{font-size:10.5px;color:var(--t2);font-weight:600;padding:7px 0;}
+.cd{padding:7px 4px;border-radius:7px;font-size:12.5px;cursor:pointer;transition:all .15s;}
+.cd:hover{background:var(--c2);}
+.cd.today{background:var(--p);color:#fff;font-weight:700;}
+.cd.ev::after{content:'';display:block;width:4px;height:4px;background:var(--acc);border-radius:50%;margin:2px auto 0;}
+.cd.off{color:rgba(255,255,255,.15);pointer-events:none;}
+
+/* LEAVE CARDS */
+.lcg{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px;}
+.lc{background:var(--c1);border:1px solid var(--bd);border-radius:14px;padding:20px;text-align:center;}
+.lcico{width:48px;height:48px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 12px;}
+.lcd{font-size:26px;font-weight:800;margin-bottom:3px;}
+.lcl{font-size:11.5px;color:var(--t2);}
+
+/* PAYROLL */
+.psg{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px;}
+.ps{background:var(--c1);border:1px solid var(--bd);border-radius:13px;padding:18px;text-align:center;}
+.psa{font-size:22px;font-weight:800;margin-bottom:3px;}
+.psl{font-size:11.5px;color:var(--t2);}
+.salr{margin-bottom:14px;}
+.salt{display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px;}
+.sall{color:var(--t3);}
+.sala{font-weight:600;}
+
+/* KANBAN */
+.kb{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.kc{background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:13px;padding:14px;}
+.kch{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--bd);}
+.kch .kt{font-size:12.5px;font-weight:700;}
+.kcnt{font-size:10.5px;background:rgba(255,255,255,.09);padding:2px 7px;border-radius:999px;}
+.kcard{background:var(--c1);border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:9px;cursor:pointer;transition:all .2s;}
+.kcard:hover{border-color:rgba(255,255,255,.18);transform:translateY(-2px);}
+.kcard:last-child{margin-bottom:0;}
+.kn{font-size:12.5px;font-weight:600;margin-bottom:3px;}
+.kr{font-size:11px;color:var(--t2);margin-bottom:9px;}
+.km{display:flex;align-items:center;justify-content:space-between;}
+
+/* PERF */
+.stars{color:var(--w);font-size:13px;letter-spacing:1px;}
+
+/* REPORT CARDS */
+.rg{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.rc{background:var(--c1);border:1px solid var(--bd);border-radius:15px;padding:28px;text-align:center;cursor:pointer;transition:all .2s;}
+.rc:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.16);}
+.rico{width:56px;height:56px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 14px;}
+.rt{font-size:15px;font-weight:700;margin-bottom:7px;}
+.rs{font-size:12px;color:var(--t2);line-height:1.5;}
+
+/* TOGGLE */
+.tog{width:42px;height:22px;border-radius:999px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;}
+.tog.on{background:var(--p);}
+.tog.off{background:rgba(255,255,255,.1);}
+.togk{position:absolute;top:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:all .2s;}
+.tog.on .togk{right:3px;}
+.tog.off .togk{left:3px;}
+.setrow{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;background:var(--c1);border:1px solid var(--bd);border-radius:10px;margin-bottom:10px;}
+.setrow:last-child{margin-bottom:0;}
+
+/* MODAL */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:300;display:none;align-items:center;justify-content:center;}
+.ov.show{display:flex;}
+.modal{background:rgba(9,13,22,.98);border:1px solid var(--bd);border-radius:20px;width:500px;max-height:82vh;overflow-y:auto;animation:mIn .28s ease;}
+@keyframes mIn{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
+.mh{padding:22px 26px 18px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;}
+.mh h2{font-size:17px;font-weight:700;}
+.mh p{font-size:11.5px;color:var(--t2);margin-top:2px;}
+.mb{padding:22px 26px;}
+.mf{padding:14px 26px 22px;display:flex;gap:10px;justify-content:flex-end;}
+
+/* FORM */
+.fg{margin-bottom:18px;}
+.fl{display:block;font-size:12px;font-weight:600;color:var(--t2);margin-bottom:7px;}
+.fi{width:100%;background:rgba(255,255,255,.06);border:1px solid var(--bd);border-radius:10px;padding:9px 13px;color:var(--t1);font-size:13.5px;font-family:inherit;outline:none;transition:border-color .2s,background .2s;}
+.fi:focus{border-color:rgba(79,70,229,.5);background:rgba(79,70,229,.07);}
+select.fi option{background:#1a2236;}
+textarea.fi{resize:vertical;}
+
+/* NOTIF */
+.np{position:fixed;top:64px;left:18px;width:340px;background:rgba(9,13,22,.98);backdrop-filter:blur(20px);border:1px solid var(--bd);border-radius:15px;z-index:200;box-shadow:0 20px 60px rgba(0,0,0,.55);display:none;}
+.np.show{display:block;animation:sld .2s ease;}
+@keyframes sld{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.nph{padding:14px 18px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;}
+.nph span{font-size:14px;font-weight:700;}
+.nph a{font-size:11.5px;color:var(--p);cursor:pointer;}
+.nit{padding:13px 18px;display:flex;gap:11px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .15s;}
+.nit:hover{background:rgba(255,255,255,.03);}
+.nit.unread{background:rgba(79,70,229,.05);}
+.nit:last-child{border-bottom:none;}
+.nico{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.ntxt{font-size:12.5px;font-weight:500;margin-bottom:3px;}
+.ntm{font-size:11px;color:var(--t2);}
+
+/* TABS */
+.tabs{display:flex;gap:3px;background:rgba(255,255,255,.04);border-radius:9px;padding:3px;}
+.tab{flex:1;padding:7px 14px;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;text-align:center;transition:all .2s;color:var(--t2);}
+.tab.on{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;}
+
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:3px;}
+
+@media(max-width:1350px){.sg{grid-template-columns:repeat(2,1fr);}.kb{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:1100px){.g73,.g2,.g3{grid-template-columns:1fr;}.lcg,.psg{grid-template-columns:1fr;}.rg{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="logo-box">L</div>
+    <div><div class="logo-name">LEAP</div><div class="logo-sub">نظام إدارة الموارد البشرية</div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nav-sec">الرئيسية</div>
+    <div class="ni on" onclick="nav('dashboard',this,'لوحة التحكم','مرحباً بك، هنا ملخص اليوم')">
+      <div class="ni-ic"><i class="fas fa-th-large"></i></div>لوحة التحكم
+    </div>
+    <div class="nav-sec">الموارد البشرية</div>
+    <div class="ni" onclick="nav('employees',this,'الموظفون','إدارة وعرض بيانات الموظفين')">
+      <div class="ni-ic"><i class="fas fa-users"></i></div>الموظفون<span class="nbadge">248</span>
+    </div>
+    <div class="ni" onclick="nav('leaves',this,'الإجازات','طلبات الإجازة والأرصدة')">
+      <div class="ni-ic"><i class="fas fa-calendar-check"></i></div>الإجازات<span class="nbadge">12</span>
+    </div>
+    <div class="ni" onclick="nav('payroll',this,'الرواتب','كشوف الرواتب والمستحقات')">
+      <div class="ni-ic"><i class="fas fa-money-bill-wave"></i></div>الرواتب
+    </div>
+    <div class="ni" onclick="nav('recruitment',this,'التوظيف','إدارة المتقدمين والوظائف')">
+      <div class="ni-ic"><i class="fas fa-user-plus"></i></div>التوظيف
+    </div>
+    <div class="ni" onclick="nav('performance',this,'الأداء','تقييمات وأهداف الموظفين')">
+      <div class="ni-ic"><i class="fas fa-chart-line"></i></div>الأداء
+    </div>
+    <div class="nav-sec">الإدارة</div>
+    <div class="ni" onclick="nav('reports',this,'التقارير','التقارير والإحصائيات')">
+      <div class="ni-ic"><i class="fas fa-chart-bar"></i></div>التقارير
+    </div>
+    <div class="ni" onclick="nav('settings',this,'الإعدادات','إعدادات الحساب والنظام')">
+      <div class="ni-ic"><i class="fas fa-cog"></i></div>الإعدادات
+    </div>
+  </nav>
+  <div class="sb-foot">
+    <div class="urow">
+      <div class="uav">م</div>
+      <div><div class="u-name">محمد الزهراني</div><div class="u-role">مدير الموارد البشرية</div></div>
+      <i class="fas fa-chevron-left" style="color:var(--t2);font-size:11px;margin-right:auto;"></i>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div class="tb-l">
+      <h1 id="pgT">لوحة التحكم</h1>
+      <span id="pgS">مرحباً بك، هنا ملخص اليوم</span>
+    </div>
+    <div class="tb-r">
+      <div class="sbar"><i class="fas fa-search" style="color:var(--t2);font-size:12px;"></i><input type="text" placeholder="بحث..."></div>
+      <div class="ibtn" onclick="toggleNP()"><i class="fas fa-bell"></i><span class="ndot"></span></div>
+      <div class="ibtn"><i class="fas fa-expand"></i></div>
+      <button class="btn bp bsm" onclick="openM('mEmp')"><i class="fas fa-plus"></i> موظف جديد</button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="page on" id="page-dashboard">
+    <div class="sg">
+      <div class="sc sb"><div class="sico"><i class="fas fa-users"></i></div><div class="sval" data-n="248">0</div><div class="slbl">إجمالي الموظفين</div><div class="schg cu"><i class="fas fa-arrow-up"></i> 12%</div></div>
+      <div class="sc sg2"><div class="sico"><i class="fas fa-user-check"></i></div><div class="sval" data-n="231">0</div><div class="slbl">حاضرون اليوم</div><div class="schg cu"><i class="fas fa-arrow-up"></i> 3%</div></div>
+      <div class="sc sw"><div class="sico"><i class="fas fa-calendar-minus"></i></div><div class="sval" data-n="17">0</div><div class="slbl">في إجازة</div><div class="schg cd"><i class="fas fa-arrow-down"></i> 2%</div></div>
+      <div class="sc sv"><div class="sico"><i class="fas fa-briefcase"></i></div><div class="sval" data-n="8">0</div><div class="slbl">وظائف شاغرة</div><div class="schg cu"><i class="fas fa-arrow-up"></i> +4</div></div>
+    </div>
+    <div class="g73">
+      <div class="card">
+        <div class="ch"><div class="ch-l"><div class="ct">إحصائيات الحضور</div><div class="cs">آخر 5 أيام</div></div>
+          <div class="tabs"><div class="tab on">أسبوعي</div><div class="tab">شهري</div></div>
+        </div>
+        <div class="cb">
+          <div class="bars" id="attChart"></div>
+          <div style="display:flex;gap:16px;margin-top:12px;justify-content:center;">
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t3);"><div style="width:10px;height:10px;border-radius:3px;background:var(--p);"></div>حاضر</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t3);"><div style="width:10px;height:10px;border-radius:3px;background:var(--p2);"></div>غائب</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ch-l"><div class="ct">توزيع الأقسام</div><div class="cs">بعدد الموظفين</div></div></div>
+        <div class="cb">
+          <div class="dw">
+            <svg width="110" height="110" viewBox="0 0 110 110">
+              <circle cx="55" cy="55" r="42" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="20"/>
+              <circle cx="55" cy="55" r="42" fill="none" stroke="#4f46e5" stroke-width="20" stroke-dasharray="106 158" stroke-dashoffset="-66" transform="rotate(-90 55 55)"/>
+              <circle cx="55" cy="55" r="42" fill="none" stroke="#7c3aed" stroke-width="20" stroke-dasharray="66 198" stroke-dashoffset="-172" transform="rotate(-90 55 55)"/>
+              <circle cx="55" cy="55" r="42" fill="none" stroke="#10b981" stroke-width="20" stroke-dasharray="50 214" stroke-dashoffset="-238" transform="rotate(-90 55 55)"/>
+              <circle cx="55" cy="55" r="42" fill="none" stroke="#f59e0b" stroke-width="20" stroke-dasharray="42 222" stroke-dashoffset="-288" transform="rotate(-90 55 55)"/>
+              <text x="55" y="59" text-anchor="middle" fill="white" font-size="15" font-weight="800" font-family="Tajawal">248</text>
+            </svg>
+            <div class="leg">
+              <div class="lr"><div class="ld" style="background:#4f46e5"></div><div class="ll">التقنية</div><div class="lv">72</div></div>
+              <div class="lr"><div class="ld" style="background:#7c3aed"></div><div class="ll">المبيعات</div><div class="lv">45</div></div>
+              <div class="lr"><div class="ld" style="background:#10b981"></div><div class="ll">العمليات</div><div class="lv">68</div></div>
+              <div class="lr"><div class="ld" style="background:#f59e0b"></div><div class="ll">الإدارة</div><div class="lv">63</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="ch"><div class="ch-l"><div class="ct">الموظفون الجدد</div><div class="cs">هذا الشهر</div></div>
+          <button class="btn bg bsm" onclick="nav('employees',document.querySelectorAll('.ni')[1],'الموظفون','')">عرض الكل</button>
+        </div>
+        <div class="cb" style="padding:0;"><table class="tbl"><thead><tr><th>الموظف</th><th>القسم</th><th>التعيين</th><th>الحالة</th></tr></thead><tbody id="dEmpB"></tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ch-l"><div class="ct">آخر النشاطات</div><div class="cs">اليوم</div></div></div>
+        <div class="cb" id="actTL"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMPLOYEES -->
+  <div class="page" id="page-employees">
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:20px;flex-wrap:wrap;">
+      <div class="sbar" style="width:280px;"><i class="fas fa-search" style="color:var(--t2);font-size:12px;"></i><input type="text" placeholder="بحث..." id="eSrch" oninput="fEmp()"></div>
+      <select class="fi" style="width:150px;" id="eDept" onchange="fEmp()"><option value="">جميع الأقسام</option><option>التقنية</option><option>المبيعات</option><option>العمليات</option><option>الإدارة</option></select>
+      <select class="fi" style="width:140px;" id="eStat" onchange="fEmp()"><option value="">كل الحالات</option><option>نشط</option><option>إجازة</option><option>عن بعد</option></select>
+      <button class="btn bp" onclick="openM('mEmp')" style="margin-right:auto;"><i class="fas fa-plus"></i> موظف جديد</button>
+    </div>
+    <div class="card"><div class="cb" style="padding:0;"><table class="tbl"><thead><tr><th>#</th><th>الموظف</th><th>المسمى</th><th>القسم</th><th>الراتب</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody id="empB"></tbody></table></div></div>
+  </div>
+
+  <!-- LEAVES -->
+  <div class="page" id="page-leaves">
+    <div class="lcg">
+      <div class="lc"><div class="lcico" style="background:rgba(79,70,229,.14);color:#818cf8;"><i class="fas fa-umbrella-beach"></i></div><div class="lcd" style="color:#818cf8;">14</div><div class="lcl">إجازة سنوية متبقية</div></div>
+      <div class="lc"><div class="lcico" style="background:rgba(16,185,129,.14);color:#34d399;"><i class="fas fa-user-md"></i></div><div class="lcd" style="color:#34d399;">7</div><div class="lcl">إجازة مرضية</div></div>
+      <div class="lc"><div class="lcico" style="background:rgba(245,158,11,.14);color:#fbbf24;"><i class="fas fa-hourglass-half"></i></div><div class="lcd" style="color:#fbbf24;">5</div><div class="lcl">طلبات معلقة</div></div>
+    </div>
+    <div class="g73">
+      <div class="card">
+        <div class="ch"><div class="ch-l"><div class="ct">طلبات الإجازة</div><div class="cs">جميع الطلبات</div></div>
+          <button class="btn bp bsm" onclick="openM('mLeave')"><i class="fas fa-plus"></i> طلب إجازة</button>
+        </div>
+        <div class="cb" style="padding:0;"><table class="tbl"><thead><tr><th>الموظف</th><th>النوع</th><th>من</th><th>إلى</th><th>أيام</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody id="leaveB"></tbody></table></div>
+      </div>
+      <div class="card"><div class="ch"><div class="ch-l"><div class="ct">يونيو 2026</div></div></div><div class="cb"><div class="cg" id="miniCal"></div></div></div>
+    </div>
+  </div>
+
+  <!-- PAYROLL -->
+  <div class="page" id="page-payroll">
+    <div class="psg">
+      <div class="ps"><div class="psa" style="color:#34d399;">2.43M</div><div class="psl">إجمالي الرواتب</div></div>
+      <div class="ps"><div class="psa" style="color:#818cf8;">185K</div><div class="psl">البدلات والمكافآت</div></div>
+      <div class="ps"><div class="psa" style="color:#fbbf24;">142K</div><div class="psl">الخصومات</div></div>
+    </div>
+    <div class="g73">
+      <div class="card">
+        <div class="ch"><div class="ch-l"><div class="ct">كشف الرواتب — يونيو 2026</div></div><button class="btn bg bsm"><i class="fas fa-download"></i> تصدير</button></div>
+        <div class="cb" style="padding:0;"><table class="tbl"><thead><tr><th>الموظف</th><th>الأساسي</th><th>البدلات</th><th>الخصومات</th><th>الصافي</th><th>الحالة</th></tr></thead><tbody id="payB"></tbody></table></div>
+      </div>
+      <div class="card"><div class="ch"><div class="ch-l"><div class="ct">نطاقات الراتب</div></div></div><div class="cb" id="salC"></div></div>
+    </div>
+  </div>
+
+  <!-- RECRUITMENT -->
+  <div class="page" id="page-recruitment">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <div><h2 style="font-size:17px;font-weight:700;">لوحة التوظيف</h2><span style="font-size:12px;color:var(--t2);">إدارة المتقدمين والوظائف الشاغرة</span></div>
+      <button class="btn bp" onclick="openM('mJob')"><i class="fas fa-plus"></i> وظيفة جديدة</button>
+    </div>
+    <div class="sg mb20">
+      <div class="sc sb"><div class="sico"><i class="fas fa-briefcase"></i></div><div class="sval">8</div><div class="slbl">وظائف مفتوحة</div></div>
+      <div class="sc sv"><div class="sico"><i class="fas fa-users"></i></div><div class="sval">124</div><div class="slbl">إجمالي المتقدمين</div></div>
+      <div class="sc sg2"><div class="sico"><i class="fas fa-user-check"></i></div><div class="sval">18</div><div class="slbl">تم التعيين</div></div>
+      <div class="sc sw"><div class="sico"><i class="fas fa-calendar-day"></i></div><div class="sval">9</div><div class="slbl">مقابلات اليوم</div></div>
+    </div>
+    <div class="card"><div class="ch"><div class="ch-l"><div class="ct">مسار التوظيف</div><div class="cs">Kanban</div></div></div><div class="cb"><div class="kb" id="kanban"></div></div></div>
+  </div>
+
+  <!-- PERFORMANCE -->
+  <div class="page" id="page-performance">
+    <div class="sg mb20">
+      <div class="sc sg2"><div class="sico"><i class="fas fa-star"></i></div><div class="sval">4.3</div><div class="slbl">متوسط التقييم</div></div>
+      <div class="sc sb"><div class="sico"><i class="fas fa-bullseye"></i></div><div class="sval">87%</div><div class="slbl">إنجاز الأهداف</div></div>
+      <div class="sc sv"><div class="sico"><i class="fas fa-graduation-cap"></i></div><div class="sval">156</div><div class="slbl">دورة تدريبية</div></div>
+      <div class="sc sw"><div class="sico"><i class="fas fa-trophy"></i></div><div class="sval">32</div><div class="slbl">موظف متميز</div></div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ch-l"><div class="ct">تقييمات الأداء الربعية</div><div class="cs">Q2 — 2026</div></div>
+        <button class="btn bp bsm"><i class="fas fa-plus"></i> تقييم جديد</button>
+      </div>
+      <div class="cb" style="padding:0;"><table class="tbl"><thead><tr><th>الموظف</th><th>القسم</th><th>إنجاز الأهداف</th><th>تقييم المدير</th><th>التقدير</th></tr></thead><tbody id="perfB"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- REPORTS -->
+  <div class="page" id="page-reports">
+    <div class="rg">
+      <div class="rc"><div class="rico" style="background:rgba(79,70,229,.14);color:#818cf8;"><i class="fas fa-users"></i></div><div class="rt">تقرير الموظفين</div><div class="rs">إحصائيات وبيانات شاملة لجميع الموظفين حسب القسم والحالة</div></div>
+      <div class="rc"><div class="rico" style="background:rgba(16,185,129,.14);color:#34d399;"><i class="fas fa-money-bill-wave"></i></div><div class="rt">تقرير الرواتب</div><div class="rs">ملخص شامل لمصروفات الرواتب والمكافآت والبدلات</div></div>
+      <div class="rc"><div class="rico" style="background:rgba(245,158,11,.14);color:#fbbf24;"><i class="fas fa-calendar-alt"></i></div><div class="rt">تقرير الإجازات</div><div class="rs">إحصائيات الإجازات والغياب لجميع الأقسام والموظفين</div></div>
+      <div class="rc"><div class="rico" style="background:rgba(124,58,237,.14);color:#a78bfa;"><i class="fas fa-chart-line"></i></div><div class="rt">تقرير الأداء</div><div class="rs">تقييمات الأداء ونتائج المراجعات الدورية لكل الأقسام</div></div>
+      <div class="rc"><div class="rico" style="background:rgba(6,182,212,.14);color:#22d3ee;"><i class="fas fa-user-plus"></i></div><div class="rt">تقرير التوظيف</div><div class="rs">إحصائيات التوظيف ومؤشرات تتبع المتقدمين</div></div>
+      <div class="rc"><div class="rico" style="background:rgba(239,68,68,.14);color:#f87171;"><i class="fas fa-file-export"></i></div><div class="rt">تصدير البيانات</div><div class="rs">تصدير جميع البيانات بصيغ Excel أو PDF أو CSV</div></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="page" id="page-settings">
+    <div class="g2">
+      <div class="card">
+        <div class="ch"><div class="ch-l"><div class="ct">الملف الشخصي</div></div></div>
+        <div class="cb">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px;">
+            <div style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--p2));display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;flex-shrink:0;">م</div>
+            <div><div style="font-size:17px;font-weight:700;">محمد الزهراني</div><div style="color:var(--t2);font-size:12px;margin-top:2px;">مدير الموارد البشرية</div><button class="btn bg bsm" style="margin-top:8px;">تغيير الصورة</button></div>
+          </div>
+          <div class="fg"><label class="fl">الاسم الكامل</label><input class="fi" value="محمد الزهراني"></div>
+          <div class="fg"><label class="fl">البريد الإلكتروني</label><input class="fi" value="m.alzahrani@leap.sa"></div>
+          <div class="fg"><label class="fl">رقم الجوال</label><input class="fi" value="+966 50 123 4567"></div>
+          <div class="fg"><label class="fl">القسم</label><input class="fi" value="الموارد البشرية"></div>
+          <button class="btn bp"><i class="fas fa-save"></i> حفظ التغييرات</button>
+        </div>
+      </div>
+      <div>
+        <div class="card mb20">
+          <div class="ch"><div class="ch-l"><div class="ct">إعدادات النظام</div></div></div>
+          <div class="cb">
+            <div class="setrow"><div><div style="font-size:13.5px;font-weight:600;">الإشعارات</div><div style="font-size:11.5px;color:var(--t2);">تفعيل إشعارات البريد والنظام</div></div><div class="tog on" onclick="this.classList.toggle('on');this.classList.toggle('off')"><div class="togk"></div></div></div>
+            <div class="setrow"><div><div style="font-size:13.5px;font-weight:600;">المصادقة الثنائية</div><div style="font-size:11.5px;color:var(--t2);">تعزيز أمان الحساب</div></div><div class="tog off" onclick="this.classList.toggle('on');this.classList.toggle('off')"><div class="togk"></div></div></div>
+            <div class="setrow"><div><div style="font-size:13.5px;font-weight:600;">تقارير أسبوعية تلقائية</div><div style="font-size:11.5px;color:var(--t2);">إرسال تقارير بالبريد كل أسبوع</div></div><div class="tog on" onclick="this.classList.toggle('on');this.classList.toggle('off')"><div class="togk"></div></div></div>
+            <div class="setrow"><div><div style="font-size:13.5px;font-weight:600;">الوضع الليلي</div><div style="font-size:11.5px;color:var(--t2);">تفعيل المظهر الداكن</div></div><div class="tog on" onclick="this.classList.toggle('on');this.classList.toggle('off')"><div class="togk"></div></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ch"><div class="ch-l"><div class="ct">تغيير كلمة المرور</div></div></div>
+          <div class="cb">
+            <div class="fg"><label class="fl">كلمة المرور الحالية</label><input class="fi" type="password" placeholder="••••••••"></div>
+            <div class="fg"><label class="fl">كلمة المرور الجديدة</label><input class="fi" type="password" placeholder="••••••••"></div>
+            <div class="fg"><label class="fl">تأكيد كلمة المرور</label><input class="fi" type="password" placeholder="••••••••"></div>
+            <button class="btn bp">تحديث كلمة المرور</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+
+<!-- NOTIF PANEL -->
+<div class="np" id="npanel">
+  <div class="nph"><span>الإشعارات</span><a onclick="document.querySelectorAll('.nit.unread').forEach(x=>x.classList.remove('unread'))">تحديد الكل كمقروء</a></div>
+  <div class="nit unread"><div class="nico" style="background:rgba(79,70,229,.14);color:#818cf8;"><i class="fas fa-user-plus"></i></div><div><div class="ntxt">طلب توظيف جديد — مهندس برمجيات أول</div><div class="ntm">منذ 5 دقائق</div></div></div>
+  <div class="nit unread"><div class="nico" style="background:rgba(245,158,11,.14);color:#fbbf24;"><i class="fas fa-calendar-check"></i></div><div><div class="ntxt">طلب إجازة من أحمد العمري — يحتاج موافقة</div><div class="ntm">منذ 20 دقيقة</div></div></div>
+  <div class="nit"><div class="nico" style="background:rgba(16,185,129,.14);color:#34d399;"><i class="fas fa-money-bill"></i></div><div><div class="ntxt">تمت معالجة رواتب شهر يونيو بنجاح</div><div class="ntm">منذ ساعة</div></div></div>
+  <div class="nit"><div class="nico" style="background:rgba(6,182,212,.14);color:#22d3ee;"><i class="fas fa-chart-bar"></i></div><div><div class="ntxt">تقرير الأداء الربعي جاهز للمراجعة</div><div class="ntm">منذ 3 ساعات</div></div></div>
+</div>
+
+<!-- MODAL: Add Employee -->
+<div class="ov" id="mEmp" onclick="if(event.target===this)closeM('mEmp')">
+  <div class="modal">
+    <div class="mh"><div><h2>إضافة موظف جديد</h2><p>أدخل بيانات الموظف</p></div><div class="ibtn" onclick="closeM('mEmp')"><i class="fas fa-times"></i></div></div>
+    <div class="mb">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="fg"><label class="fl">الاسم الأول</label><input class="fi" placeholder="محمد"></div>
+        <div class="fg"><label class="fl">اسم العائلة</label><input class="fi" placeholder="الزهراني"></div>
+      </div>
+      <div class="fg"><label class="fl">البريد الإلكتروني</label><input class="fi" placeholder="email@leap.sa"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="fg"><label class="fl">القسم</label><select class="fi"><option>التقنية</option><option>المبيعات</option><option>العمليات</option><option>الإدارة</option></select></div>
+        <div class="fg"><label class="fl">المسمى الوظيفي</label><input class="fi" placeholder="مهندس برمجيات"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="fg"><label class="fl">الراتب الأساسي (ريال)</label><input class="fi" placeholder="15,000"></div>
+        <div class="fg"><label class="fl">تاريخ التعيين</label><input class="fi" type="date"></div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn bg" onclick="closeM('mEmp')">إلغاء</button><button class="btn bp"><i class="fas fa-save"></i> حفظ</button></div>
+  </div>
+</div>
+
+<!-- MODAL: Leave -->
+<div class="ov" id="mLeave" onclick="if(event.target===this)closeM('mLeave')">
+  <div class="modal">
+    <div class="mh"><div><h2>طلب إجازة جديدة</h2></div><div class="ibtn" onclick="closeM('mLeave')"><i class="fas fa-times"></i></div></div>
+    <div class="mb">
+      <div class="fg"><label class="fl">الموظف</label><select class="fi"><option>محمد الزهراني</option><option>سارة الأحمد</option><option>أحمد العمري</option></select></div>
+      <div class="fg"><label class="fl">نوع الإجازة</label><select class="fi"><option>إجازة سنوية</option><option>إجازة مرضية</option><option>إجازة طارئة</option></select></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="fg"><label class="fl">من تاريخ</label><input class="fi" type="date"></div>
+        <div class="fg"><label class="fl">إلى تاريخ</label><input class="fi" type="date"></div>
+      </div>
+      <div class="fg"><label class="fl">السبب</label><textarea class="fi" rows="3" placeholder="وصف سبب الإجازة..."></textarea></div>
+    </div>
+    <div class="mf"><button class="btn bg" onclick="closeM('mLeave')">إلغاء</button><button class="btn bp">تقديم الطلب</button></div>
+  </div>
+</div>
+
+<!-- MODAL: Job -->
+<div class="ov" id="mJob" onclick="if(event.target===this)closeM('mJob')">
+  <div class="modal">
+    <div class="mh"><div><h2>إضافة وظيفة جديدة</h2></div><div class="ibtn" onclick="closeM('mJob')"><i class="fas fa-times"></i></div></div>
+    <div class="mb">
+      <div class="fg"><label class="fl">المسمى الوظيفي</label><input class="fi" placeholder="مهندس برمجيات أول"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="fg"><label class="fl">القسم</label><select class="fi"><option>التقنية</option><option>المبيعات</option><option>العمليات</option></select></div>
+        <div class="fg"><label class="fl">نوع الدوام</label><select class="fi"><option>دوام كامل</option><option>دوام جزئي</option><option>عن بعد</option></select></div>
+      </div>
+      <div class="fg"><label class="fl">نطاق الراتب</label><input class="fi" placeholder="12,000 — 18,000 ريال"></div>
+      <div class="fg"><label class="fl">وصف الوظيفة</label><textarea class="fi" rows="3" placeholder="وصف تفصيلي للمتطلبات..."></textarea></div>
+    </div>
+    <div class="mf"><button class="btn bg" onclick="closeM('mJob')">إلغاء</button><button class="btn bp">نشر الوظيفة</button></div>
+  </div>
+</div>
+
+<script>
+const CL=['#4f46e5','#7c3aed','#10b981','#f59e0b','#06b6d4','#ec4899'];
+const EMPS=[
+  {id:'EMP-001',name:'أحمد الشمري',role:'مطور برمجيات أول',dept:'التقنية',sal:18500,st:'نشط',date:'2024-01-15',i:'أ',c:0},
+  {id:'EMP-002',name:'سارة الأحمد',role:'مديرة مبيعات',dept:'المبيعات',sal:16200,st:'نشط',date:'2024-02-10',i:'س',c:1},
+  {id:'EMP-003',name:'خالد المنصور',role:'محلل بيانات',dept:'العمليات',sal:14800,st:'عن بعد',date:'2024-03-05',i:'خ',c:2},
+  {id:'EMP-004',name:'نورة العتيبي',role:'مصممة UX/UI',dept:'التقنية',sal:15600,st:'إجازة',date:'2024-03-22',i:'ن',c:3},
+  {id:'EMP-005',name:'فيصل الدوسري',role:'مدير مشاريع',dept:'الإدارة',sal:22000,st:'نشط',date:'2024-04-01',i:'ف',c:4},
+  {id:'EMP-006',name:'ريم الحارثي',role:'أخصائية موارد بشرية',dept:'الإدارة',sal:13500,st:'نشط',date:'2024-04-18',i:'ر',c:5},
+  {id:'EMP-007',name:'تركي الغامدي',role:'مهندس شبكات',dept:'التقنية',sal:16900,st:'نشط',date:'2024-05-02',i:'ت',c:0},
+  {id:'EMP-008',name:'منيرة القحطاني',role:'محاسبة أولى',dept:'الإدارة',sal:14100,st:'عن بعد',date:'2024-05-20',i:'م',c:1},
+];
+const LEAVES=[
+  {emp:'أحمد الشمري',type:'إجازة سنوية',fr:'2026-06-20',to:'2026-06-27',d:7,st:'معلق'},
+  {emp:'سارة الأحمد',type:'إجازة مرضية',fr:'2026-06-18',to:'2026-06-19',d:2,st:'موافق'},
+  {emp:'نورة العتيبي',type:'إجازة أمومة',fr:'2026-06-10',to:'2026-07-10',d:30,st:'موافق'},
+  {emp:'خالد المنصور',type:'إجازة طارئة',fr:'2026-06-25',to:'2026-06-26',d:2,st:'مرفوض'},
+  {emp:'فيصل الدوسري',type:'إجازة سنوية',fr:'2026-07-01',to:'2026-07-14',d:14,st:'معلق'},
+];
+const PAY=[
+  {emp:'أحمد الشمري',base:18500,allow:3200,ded:850,net:20850,st:'مدفوع',c:0},
+  {emp:'سارة الأحمد',base:16200,allow:2800,ded:620,net:18380,st:'مدفوع',c:1},
+  {emp:'خالد المنصور',base:14800,allow:2400,ded:540,net:16660,st:'مدفوع',c:2},
+  {emp:'نورة العتيبي',base:15600,allow:2600,ded:710,net:17490,st:'معلق',c:3},
+  {emp:'فيصل الدوسري',base:22000,allow:4500,ded:980,net:25520,st:'مدفوع',c:4},
+  {emp:'ريم الحارثي',base:13500,allow:2100,ded:490,net:15110,st:'مدفوع',c:5},
+];
+const KANBAN={
+  'مرشحون جدد':[{n:'عبدالله السالم',r:'مطور React'},{n:'لمياء الشهري',r:'مصممة جرافيك'},{n:'سعد البقمي',r:'محلل أمن'}],
+  'قيد المراجعة':[{n:'هند الجهني',r:'مديرة منتج'},{n:'ماجد الحربي',r:'مهندس DevOps'}],
+  'المقابلات':[{n:'نوال الرشيد',r:'أخصائية تسويق'},{n:'أسامة المطيري',r:'مهندس بيانات'},{n:'دلال العنزي',r:'مطورة Flutter'}],
+  'العروض المقدمة':[{n:'بدر الزهراني',r:'قائد فريق تقني'}],
+};
+const PERF=[
+  {emp:'أحمد الشمري',dept:'التقنية',g:92,r:4.7,gr:'ممتاز',c:0},
+  {emp:'سارة الأحمد',dept:'المبيعات',g:85,r:4.3,gr:'جيد جداً',c:1},
+  {emp:'فيصل الدوسري',dept:'الإدارة',g:88,r:4.5,gr:'ممتاز',c:4},
+  {emp:'خالد المنصور',dept:'العمليات',g:79,r:3.9,gr:'جيد',c:2},
+  {emp:'نورة العتيبي',dept:'التقنية',g:95,r:4.9,gr:'ممتاز',c:3},
+  {emp:'ريم الحارثي',dept:'الإدارة',g:76,r:3.7,gr:'جيد',c:5},
+];
+
+function nav(pg,el,t,s){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.getElementById('page-'+pg).classList.add('on');
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  if(el)el.classList.add('on');
+  document.getElementById('pgT').textContent=t;
+  document.getElementById('pgS').textContent=s;
+  document.getElementById('npanel').classList.remove('show');
+}
+function openM(id){document.getElementById(id).classList.add('show');}
+function closeM(id){document.getElementById(id).classList.remove('show');}
+function toggleNP(){document.getElementById('npanel').classList.toggle('show');}
+document.addEventListener('click',e=>{
+  const np=document.getElementById('npanel');
+  if(!np.contains(e.target)&&!e.target.closest('[onclick="toggleNP()"]'))np.classList.remove('show');
+});
+
+function animCnt(){
+  document.querySelectorAll('[data-n]').forEach(el=>{
+    const t=+el.dataset.n;let c=0;const s=Math.ceil(t/40);
+    const iv=setInterval(()=>{c=Math.min(c+s,t);el.textContent=c.toLocaleString('ar-SA');if(c>=t)clearInterval(iv);},35);
+  });
+}
+
+function buildAttChart(){
+  const days=['أح','إث','ثل','أر','خم'];
+  const att=[228,235,219,231,226];
+  const ab=[20,13,29,17,22];
+  const max=250;
+  const c=document.getElementById('attChart');c.innerHTML='';
+  days.forEach((d,i)=>{
+    const bg=document.createElement('div');bg.className='bgrp';
+    const aH=Math.round((att[i]/max)*140);
+    const bH=Math.round((ab[i]/max)*140);
+    bg.innerHTML=`<div style="display:flex;gap:4px;align-items:flex-end;height:145px;">
+      <div class="barv" style="background:var(--p);height:${aH}px;width:16px;" title="${att[i]}"></div>
+      <div class="barv" style="background:var(--p2);height:${bH}px;width:16px;" title="${ab[i]}"></div>
+    </div><div class="blbl">${d}</div>`;
+    c.appendChild(bg);
+  });
+}
+
+function stCls(s){return s==='نشط'?'bgg':s==='إجازة'?'bgw':s==='عن بعد'?'bgb':'bgr';}
+
+function buildDashEmps(){
+  const b=document.getElementById('dEmpB');b.innerHTML='';
+  EMPS.slice(0,5).forEach(e=>{
+    b.innerHTML+=`<tr><td><div class="erow"><div class="av" style="background:${CL[e.c]}22;color:${CL[e.c]};">${e.i}</div><div><div class="en">${e.name}</div><div class="eid">${e.id}</div></div></div></td>
+    <td><span class="badge bgp">${e.dept}</span></td>
+    <td style="color:var(--t2);font-size:12px;">${e.date}</td>
+    <td><span class="badge ${stCls(e.st)}">${e.st}</span></td></tr>`;
+  });
+}
+
+function buildTimeline(){
+  const items=[
+    {ic:'fas fa-user-plus',bg:'rgba(79,70,229,.14)',cl:'#818cf8',h:'تعيين موظف جديد',p:'انضم أحمد الشمري إلى التقنية',t:'منذ 10 دق'},
+    {ic:'fas fa-check-circle',bg:'rgba(16,185,129,.14)',cl:'#34d399',h:'موافقة على إجازة',p:'تم قبول إجازة سارة الأحمد',t:'منذ 45 دق'},
+    {ic:'fas fa-money-bill-wave',bg:'rgba(245,158,11,.14)',cl:'#fbbf24',h:'صرف الرواتب',p:'تمت معالجة 248 راتب بنجاح',t:'منذ ساعة'},
+    {ic:'fas fa-briefcase',bg:'rgba(124,58,237,.14)',cl:'#a78bfa',h:'وظيفة جديدة',p:'مهندس بيانات أول — التقنية',t:'منذ 2 ساعة'},
+  ];
+  const c=document.getElementById('actTL');c.innerHTML='';
+  items.forEach(it=>{
+    c.innerHTML+=`<div class="tli"><div class="tlic" style="background:${it.bg};color:${it.cl};"><i class="${it.ic}"></i></div>
+    <div class="tlct"><h4>${it.h}</h4><p>${it.p} · <span style="color:var(--acc)">${it.t}</span></p></div></div>`;
+  });
+}
+
+function buildEmpTable(data){
+  const b=document.getElementById('empB');b.innerHTML='';
+  (data||EMPS).forEach((e,i)=>{
+    b.innerHTML+=`<tr><td style="color:var(--t2);font-size:12px;">${i+1}</td>
+    <td><div class="erow"><div class="av" style="background:${CL[e.c]}22;color:${CL[e.c]};">${e.i}</div><div><div class="en">${e.name}</div><div class="eid">${e.id}</div></div></div></td>
+    <td style="font-size:12.5px;">${e.role}</td><td><span class="badge bgp">${e.dept}</span></td>
+    <td style="font-weight:600;">${e.sal.toLocaleString('ar-SA')} ر.س</td>
+    <td><span class="badge ${stCls(e.st)}">${e.st}</span></td>
+    <td><div style="display:flex;gap:6px;"><button class="btn bg bsm"><i class="fas fa-eye"></i></button><button class="btn bg bsm"><i class="fas fa-edit"></i></button></div></td></tr>`;
+  });
+}
+
+function fEmp(){
+  const q=(document.getElementById('eSrch').value||'').toLowerCase();
+  const d=document.getElementById('eDept').value;
+  const s=document.getElementById('eStat').value;
+  buildEmpTable(EMPS.filter(e=>(!q||(e.name+e.id).toLowerCase().includes(q))&&(!d||e.dept===d)&&(!s||e.st===s)));
+}
+
+function buildLeaveTable(){
+  const b=document.getElementById('leaveB');b.innerHTML='';
+  LEAVES.forEach(l=>{
+    const sc=l.st==='موافق'?'bgg':l.st==='مرفوض'?'bgr':'bgw';
+    const act=l.st==='معلق'?`<div style="display:flex;gap:5px;"><button class="btn bsc bsm"><i class="fas fa-check"></i></button><button class="btn bdn bsm"><i class="fas fa-times"></i></button></div>`:'<span style="color:var(--t2);font-size:12px;">—</span>';
+    b.innerHTML+=`<tr><td style="font-weight:500;">${l.emp}</td><td><span class="badge bgb">${l.type}</span></td>
+    <td style="font-size:12.5px;color:var(--t2);">${l.fr}</td><td style="font-size:12.5px;color:var(--t2);">${l.to}</td>
+    <td style="font-weight:600;text-align:center;">${l.d}</td><td><span class="badge ${sc}">${l.st}</span></td><td>${act}</td></tr>`;
+  });
+}
+
+function buildCal(){
+  const c=document.getElementById('miniCal');c.innerHTML='';
+  ['أح','إث','ث','أر','خ','ج','س'].forEach(d=>{c.innerHTML+=`<div class="cdn">${d}</div>`;});
+  const evs=[3,10,15,18,22,25];
+  for(let i=0;i<0;i++)c.innerHTML+=`<div class="cd off"></div>`;
+  for(let d=1;d<=30;d++){
+    c.innerHTML+=`<div class="cd ${d===18?'today':''} ${evs.includes(d)&&d!==18?'ev':''}">${d}</div>`;
+  }
+}
+
+function buildPayTable(){
+  const b=document.getElementById('payB');b.innerHTML='';
+  PAY.forEach(p=>{
+    const sc=p.st==='مدفوع'?'bgg':'bgw';
+    b.innerHTML+=`<tr><td><div class="erow"><div class="av" style="background:${CL[p.c]}22;color:${CL[p.c]};">${p.emp[0]}</div><div class="en">${p.emp}</div></div></td>
+    <td>${p.base.toLocaleString('ar-SA')}</td><td style="color:#34d399;">+${p.allow.toLocaleString('ar-SA')}</td>
+    <td style="color:#f87171;">-${p.ded.toLocaleString('ar-SA')}</td>
+    <td style="font-weight:700;">${p.net.toLocaleString('ar-SA')} ر.س</td>
+    <td><span class="badge ${sc}">${p.st}</span></td></tr>`;
+  });
+}
+
+function buildSalChart(){
+  const ranges=[{l:'10K — 15K',n:48,cl:'var(--acc)'},{l:'15K — 20K',n:92,cl:'var(--p)'},{l:'20K — 25K',n:67,cl:'var(--p2)'},{l:'25K+',n:41,cl:'var(--g)'}];
+  const c=document.getElementById('salC');c.innerHTML='';
+  ranges.forEach(r=>{
+    c.innerHTML+=`<div class="salr"><div class="salt"><span class="sall">${r.l} ر.س</span><span class="sala">${r.n} موظف</span></div>
+    <div class="prog"><div class="pf" style="width:${Math.round(r.n)}%;background:${r.cl};"></div></div></div>`;
+  });
+}
+
+function buildKanban(){
+  const b=document.getElementById('kanban');b.innerHTML='';
+  const cc={'مرشحون جدد':'#818cf8','قيد المراجعة':'#fbbf24','المقابلات':'#22d3ee','العروض المقدمة':'#34d399'};
+  Object.entries(KANBAN).forEach(([title,cards])=>{
+    const col=document.createElement('div');col.className='kc';
+    col.innerHTML=`<div class="kch"><span class="kt" style="color:${cc[title]}">${title}</span><span class="kcnt">${cards.length}</span></div>`;
+    cards.forEach(card=>{
+      col.innerHTML+=`<div class="kcard"><div class="kn">${card.n}</div><div class="kr">${card.r}</div>
+      <div class="km"><div class="av" style="width:26px;height:26px;font-size:10px;background:rgba(79,70,229,.2);color:#818cf8;">${card.n[0]}</div>
+      <span class="badge bgp" style="font-size:10px;">متقدم</span></div></div>`;
+    });
+    b.appendChild(col);
+  });
+}
+
+function buildPerfTable(){
+  const b=document.getElementById('perfB');b.innerHTML='';
+  PERF.forEach(p=>{
+    const gc=p.gr==='ممتاز'?'bgg':p.gr==='جيد جداً'?'bgp':'bgw';
+    const st='★'.repeat(Math.round(p.r))+'☆'.repeat(5-Math.round(p.r));
+    b.innerHTML+=`<tr><td><div class="erow"><div class="av" style="background:${CL[p.c]}22;color:${CL[p.c]};">${p.emp[0]}</div><div class="en">${p.emp}</div></div></td>
+    <td><span class="badge bgp">${p.dept}</span></td>
+    <td><div style="display:flex;align-items:center;gap:10px;"><div class="prog" style="flex:1;"><div class="pf" style="width:${p.g}%;background:var(--p);"></div></div><span style="font-size:12px;font-weight:600;min-width:34px;">${p.g}%</span></div></td>
+    <td><span class="stars">${st}</span> <span style="font-size:12px;color:var(--t2);">${p.r}</span></td>
+    <td><span class="badge ${gc}">${p.gr}</span></td></tr>`;
+  });
+}
+
+(function init(){
+  animCnt();
+  buildAttChart();
+  buildDashEmps();
+  buildTimeline();
+  buildEmpTable();
+  buildLeaveTable();
+  buildCal();
+  buildPayTable();
+  buildSalChart();
+  buildKanban();
+  buildPerfTable();
+})();
+</script>
+</body>
+</html>
